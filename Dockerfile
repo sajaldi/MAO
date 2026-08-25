@@ -17,7 +17,10 @@ COPY --from=builder /install /usr/local
 
 COPY . .
 
-RUN chmod +x entrypoint.sh
+RUN apt-get update && apt-get install -y --no-install-recommends dos2unix && rm -rf /var/lib/apt/lists/* \
+    && dos2unix entrypoint.sh \
+    && chmod +x entrypoint.sh \
+    && apt-get purge -y dos2unix && apt-get autoremove -y
 
 EXPOSE 7070
 
