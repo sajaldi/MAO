@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - SECRET_KEY=your-secret-key-change-in-production
+      - ALLOWED_HOSTS=*
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
