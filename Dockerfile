@@ -17,12 +17,8 @@ COPY --from=builder /install /usr/local
 
 COPY . .
 
-RUN apt-get update && apt-get install -y --no-install-recommends dos2unix && rm -rf /var/lib/apt/lists/* \
-    && dos2unix entrypoint.sh \
-    && chmod +x entrypoint.sh \
-    && apt-get purge -y dos2unix && apt-get autoremove -y
+RUN mkdir -p data staticfiles
 
 EXPOSE 7070
 
-ENTRYPOINT ["./entrypoint.sh"]
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:7070", "--workers", "4", "--threads", "2"]
+CMD ["sh", "-c", "mkdir -p /app/data && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py seed_data; gunicorn config.wsgi:application --bind 0.0.0.0:7070 --workers 4 --threads 2"]
